@@ -2,6 +2,7 @@ import { useRef } from "react";
 import { Editor } from "@tinymce/tinymce-react";
 import "./App.css";
 
+
 export default function App() {
   const editorRef = useRef(null);
   const log = () => {
@@ -16,9 +17,7 @@ export default function App() {
       xhr.withCredentials = false;
       xhr.open(
         "POST",
-        `https://www.imghippo.com/v1/upload?api_key=${
-          import.meta.env.VITE_IMG_HIPPO_API_KEY
-        }`
+        `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_IMG_HIPPO_API_KEY}`
       );
 
       xhr.upload.onprogress = (e) => {
@@ -36,11 +35,8 @@ export default function App() {
           return;
         }
 
-        //hippo storage
         const raw = JSON.parse(xhr.responseText);
-        const json = { location: raw.data.view_url };
-        // const json = { location: raw.data.url };
-        // console.log(json);
+        const json = { location: raw.data.url };
 
         if (!json || typeof json.location != "string") {
           reject("Invalid JSON: " + xhr.responseText);
@@ -58,8 +54,7 @@ export default function App() {
       };
 
       const formData = new FormData();
-      // formData.append("image", blobInfo.blob(), blobInfo.filename());
-      formData.append("file", blobInfo.blob(), blobInfo.filename());
+      formData.append("image", blobInfo.blob(), blobInfo.filename());
 
       xhr.send(formData);
     });
@@ -67,7 +62,7 @@ export default function App() {
   return (
     <>
       <Editor
-        apiKey="flaslgydxvivestoido2p1wiug67ocqud6p6spipwz26b2yk"
+        apiKey={import.meta.env.VITE_TINY_MCE_API_KEY}
         onInit={(_evt, editor) => (editorRef.current = editor)}
         initialValue="<p>This is the initial content of the editor.</p>"
         init={{
